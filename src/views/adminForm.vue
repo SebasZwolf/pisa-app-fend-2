@@ -1,6 +1,6 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.9/vue.js"></script>
 <template>
-  <div class="container">
+  <div class="container" id="app">
     <table class="table table-striped">
       <tbody>
       <tr>
@@ -21,16 +21,19 @@
               </div>
               <!-- The second value will be selected initially -->
 
-              <select name="provincia">
-                <option  value="value1">Value 1</option>
-                <option value="value2" >Value 2</option>
-                <option value="value3">Value 3</option>
-              </select>
-              <select name="distrito">
-                <option value="value1">Value 1</option>
-                <option value="value2" >Value 2</option>
-                <option value="value3">Value 3</option>
-              </select>
+              <ejs-combobox :dataSource='dataItem1' :fields='dataFields1' :change='onChange' placeholder='select a region' sortOrder="Descending" id="regionBox" >
+
+              </ejs-combobox>
+              <button type="button" v-on:click="myFunction">Try it</button>
+
+              <ejs-combobox :dataSource='dataItem2' :fields='dataFields2' :change='onchange1' :enabled='penable' :query='childDataQuery2' placeholder='select a province' sortOrder="Descending" id="provinciaBox" >
+
+              </ejs-combobox>
+
+              <ejs-combobox :dataSource='dataItem3' :fields='dataFields3' placeholder='select a district' sortOrder="Descending" id="distritoBox">
+
+              </ejs-combobox>
+
 
             </fieldset>
             <input type="submit" class="fadeIn fourth" value="Log In">
@@ -45,44 +48,29 @@
 <script>
 import axios from 'axios';
 const llave = localStorage.getItem('rolUsuario');
-let regionArray = [];
-let provinciaArray = [];
+import Vue from "vue";
+import {ComboBoxPlugin} from '@syncfusion/ej2-vue-dropdowns';
+Vue.use(ComboBoxPlugin);
+import {DataManager,WebApiAdaptor} from '@syncfusion/ej2-data';
 
-
-
-console.log("hola");
-console.log(provinciaArray);
-
-
-
-
-
-
-
-
+let provinciaData =1;
+    //document.getElementById("regionBox").value;
+let distritoData =1;
+    //document.getElementById("provinciaBox").value;;
+let regionData=1;
+    //document.getElementById("distritoBox").value;;
 axios.interceptors.request.use(
     config =>{
       config.headers.authorization=`Bearer ${llave}`;
       return config;
     },
     error =>{
-      console ("error papu xd")
+      console ("error en llave ")
     }
 )
-axios.get('http://localhost:3000/api/regions')
-    .then(regiondata=>{
-          regionArray=regiondata.data;
-          console.log(regionArray);
-          console.log("regionArray");
-        }
-    )
-console.log("hola1");
 
-console.log(regionArray);
 
-console.log("prueba");
-console.log(regionArray);
-var select = document.getElementById("select")
+/*var select = document.getElementById("select")
 for(var i=0;i<regionArray.length;i++)
 {
   var option = document.createElement("OPTION"),
@@ -90,18 +78,93 @@ for(var i=0;i<regionArray.length;i++)
   option.appendChild(txt);
   option.setAttribute("value",regionArray[i]);
   select.insertBefore(option,select.lastChild)
-}
-export default {
+}*/
+export default Vue.extend({
   name: "adminForm",
   data: ()=> ({
+    penable: false,
+    dataItem1: new DataManager({
+      headers: [{ 'Authorization': `Bearer ${llave}` }] ,
+
+
+      url: 'http://localhost:3000/api/regions',
+      adaptor:new WebApiAdaptor,
+      crossDomain:true
+    }),
+    //provincia: document.getElementById("regionBox").ej2_instances[0].itemData.id,
+    //region:regionData,
+    dataFields1: {Value:'id',text:'name'},
+    dataItem2: new DataManager({
+      headers: [{ 'Authorization': `Bearer ${llave}` }] ,
+
+      url: 'http://localhost:3000/api/regions/'+ regionData+'/provinces' ,
+      adaptor:new WebApiAdaptor,
+      crossDomain:true
+    }),
+    childDataQuery2: null,
+    dataFields2: {Value:'id',text:'name'},
+    //distrito: document.getElementById("provinciaBox").ej2_instances[0].itemData.id,
+    dataItem3: new DataManager({
+      headers: [{ 'Authorization': `Bearer ${llave}` }] ,
+
+      url: 'http://localhost:3000/api/provinces/'+provinciaData+'/districts',
+      adaptor:new WebApiAdaptor,
+      crossDomain:true
+    }),
+    dataFields3: {Value:'id',text:'name'},
     colegio: "",
     correo: "",
-    region:"re",
-    provincia:"pr",
-    distrito:2,
-    extrakey :llave,
+
+
   }),
+      /* mounted() {
+         axios.get('http://localhost:3000/api/regions')
+             .then(response=>{
+                   regionArray=response.data;
+                   console.log(regionArray);
+                  // console.log("regionArray");
+              // for (var i = 0; i < 3; i++) {
+                // regionArray.push(response.data.at(i).name);
+               //}
+               console.log(regionArray);
+               console.log(llave);
+
+            }
+        )
+
+
+
+  },*/
+  computed:
+      {
+
+
+  },
   methods: {
+    myFunction: function (){
+      var x = document.getElementById("regionBox").ej2_instances[0].itemData.id;
+      console.log(x) ;
+    },
+    onChange : function() {
+
+      regionData =document.getElementById("regionBox").ej2_instances[0].itemData.id;
+      console.log(regionData);
+      this.dataItem2.url='http://localhost:3000/api/regions/'+ regionData+'/provinces';
+      this.penable = true;
+
+    },
+    onchange1 : function()
+
+    {
+      /*new DataManager({ url: SERVICE_URI, adaptor: new ODataAdaptor, headers:[{ 'syncfusion': 'true' }] })
+          .executeQuery(new Query())
+          .then((e) => {
+            //get result from e.result
+          });*/
+      console.log("xd");
+    },
+
+
     login() {
       let json =
           {
@@ -115,6 +178,8 @@ export default {
           };
 
       console.log(json);
+
+
 //mounted, v-bind , v-for
 
 
@@ -139,9 +204,9 @@ export default {
 
     }
   }
-}
+})
 </script>
 
 <style scoped>
-
+@import url(https://cdn.syncfusion.com/ej2/material.css);
 </style>
