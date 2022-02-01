@@ -68,7 +68,8 @@ axios.interceptors.request.use(
     error =>{
       console ("error papu xd")
     }
-)
+);
+
 axios.get('http://localhost:3000/api/regions')
     .then(regiondata=>{
           regionArray=regiondata.data;
@@ -76,12 +77,8 @@ axios.get('http://localhost:3000/api/regions')
           console.log("regionArray");
         }
     )
-console.log("hola1");
+console.log("hola1", regionArray, "prueba", regionArray);
 
-console.log(regionArray);
-
-console.log("prueba");
-console.log(regionArray);
 var select = document.getElementById("select")
 for(var i=0;i<regionArray.length;i++)
 {

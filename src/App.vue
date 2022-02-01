@@ -1,10 +1,5 @@
 <template>
   <div id="app">
-    <div id="nav">
-
-
-
-    </div>
     <router-view/>
   </div>
 </template>
@@ -23,11 +18,20 @@
 
   a {
     font-weight: bold;
-    color: #2c3e50;
-
-    &.router-link-exact-active {
-      color: #42b983;
-    }
+    color: #92badd;
+    display:inline-block;
+    text-decoration: none;
+    font-weight: 400;
   }
 }
+
+html { background-color: #56baed; }
+body { font-family: "Poppins", sans-serif; height: 100vh; }
+
+*:focus { outline: none; }
+
+.icon {
+  width:60%;
+}
 </style>
+ 
