@@ -33,5 +33,23 @@ body { font-family: "Poppins", sans-serif; height: 100vh; }
 .icon {
   width:60%;
 }
+
+form.defForm{
+  >div { margin-bottom: 1rem; }
+
+  >.inputrow{
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+
+    label { flex : 1; text-align: left; }
+    input { 
+      flex : 4; 
+      &[type=text]{ text-align: right; border: none; border-bottom: 1px solid #0008; }
+      &[type=file]{ text-align: right; font-size: 80%; border: 1px solid #0008; padding : 2px; margin-top: 4px; }
+    }
+    select { flex: 4; text-align: right; border: 1px solid #0008; align-self: stretch;  }
+  }
+}
 </style>
  

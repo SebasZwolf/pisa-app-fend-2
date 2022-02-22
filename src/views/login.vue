@@ -3,25 +3,21 @@
     <div style="
       text-align: center;
       max-width: 320px; margin: auto; border-radius: 12px; padding: 20px;
-      background: #fff; box-shadow: 0 20px 60px 0 #0005;
-    ">
+      background: #fff; box-shadow: 0 20px 60px 0 #0005;">
       <!-- Icon -->
       <div class="fadeIn" style="--a-delay: 0;"><img src="@/assets/logo.png" id="icon" alt="User Icon" /></div>
 
       <!-- Login Form -->
       <form v-on:submit.prevent="login" style="width: 80%; margin: auto;">
-        <input type="text" id="uname" class="fadeIn"      style="--a-delay: 1;" name="uname" placeholder="usuario">
-        <input type="password" id="passw" class="fadeIn"  style="--a-delay: 2;" name="passw" placeholder="contraseña">
+        <input type="text"      id="uname" class="fadeIn" style="--a-delay: 1;" name="uname" placeholder="usuario">
+        <input type="password"  id="passw" class="fadeIn" style="--a-delay: 2;" name="passw" placeholder="contraseña">
 
-        <button type="submit" class="fadeIn"              style="--a-delay: 3;">Log in</button>
+        <button type="submit"              class="fadeIn" style="--a-delay: 3;">Enviar</button>
 
         <div class="alert alert-danger" style="width: 100%; padding: 4px; font-size: 90%;" role="alert" v-show="error_msg != '' ">
           {{error_msg}}
         </div>
       </form>
-
-      
-
     </div>
   </div>
 </template>
@@ -58,8 +54,6 @@ export default vue.extend({
   }
 })
 </script>
-
-
 
 <style lang="scss" scoped>
 /* FORM TYPOGRAPHY*/
