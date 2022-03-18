@@ -12,7 +12,7 @@
         <input type="text"      id="uname" class="fadeIn" style="--a-delay: 1;" name="uname" placeholder="usuario">
         <input type="password"  id="passw" class="fadeIn" style="--a-delay: 2;" name="passw" placeholder="contraseña">
 
-        <button type="submit"              class="fadeIn" style="--a-delay: 3;">Enviar</button>
+        <button type="submit"   class="fadeIn" style="--a-delay: 3;">Enviar</button>
 
         <div class="alert alert-danger" style="width: 100%; padding: 4px; font-size: 90%;" role="alert" v-show="error_msg != '' ">
           {{error_msg}}
@@ -23,10 +23,8 @@
 </template>
 
 <script lang="ts">
-import axios from 'axios';
+import axios from '@/util/axiosInstance';
 import vue from 'vue';
-
-const axiosBase = 'http://localhost:3000';
 
 export default vue.extend({
   name: "login",
@@ -38,14 +36,13 @@ export default vue.extend({
     login(e : Event) {
       const data = Object.fromEntries((new FormData(e.target as HTMLFormElement)).entries());
 
-      axios.post(axiosBase + '/api/login', { username : data.uname, password : data.passw, })
+      axios.post('/login', { username : data.uname, password : data.passw, })
         .then((r) : string | undefined => {
           if(r.status !== 201) return this.error_msg = r.data as string;
 
           localStorage.setItem('token', (r.data as { token : string}).token);
           this.$router.push({ name : 'school'});
         }).catch(({ response : { status } }) =>{
-          //console.log(status);
           this.error_msg = status === 401 ? 'usuario no valido!' : status === 404 ? 'error interno, comunicar al admin' : 'error desconocido, comunicar al admin';
         })    
     return;

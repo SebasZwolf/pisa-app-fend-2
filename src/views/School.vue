@@ -1,5 +1,10 @@
 <template>
   <div style="min-height: 100vh; display: flex; align-items: center;">
+
+    <div v-if="message !== null" style="position: fixed; top: 0; left: 50%; transform: translate(-50%, 50%); padding : 16px; baground-color: #fff; box-shadow: 0 6px 16px #0006;">
+      <span v-text="message"></span>
+    </div>
+
     <div class="" style="
       text-align: center; max-width: 720px; width: max(90%, 320px);
       margin: auto; border-radius: 12px; padding: 20px;
@@ -8,7 +13,7 @@
 
       <def-nav/>
 
-      <form @submit.prevent="send" class="defForm">
+      <form @submit.prevent="send" ref="working-form" class="defForm">
           <div class="inputrow">
             <label for="n1" >Colegio</label><input id="n1" name="coleg" required="true" type="text">
           </div>
@@ -36,7 +41,7 @@
 </template>
 
 <script lang="ts">
-import axios from 'axios';
+import axios from '@/util/axiosInstance';
 import vue from 'vue';
 import DefNav from '@/components/nav.vue'
 
@@ -45,42 +50,44 @@ interface item {
   id : number,
 };
 
-const saxios = axios.create({
-  baseURL: 'http://localhost:3000/api/',
-  headers: {
-    authorization : 'Bearer ' + localStorage.getItem('token') as string
-  }
-});
-
 export default vue.extend({
   data: ()=> ({
     regi : [] as item[],
     prov : [] as item[],
     dist : [] as item[],
+    message : null as string | null
   }),
   components : {
     DefNav
   },
-  created : function(){ saxios.get('/regions').then(r =>this.regi = r.data as item[]).catch(e=>console.log({...e})); },
-  mounted: function() { },
+  created : function(){ axios.get('/regions').then(r =>this.regi = r.data as item[]).catch(e=>console.log({...e})); },
+  mounted: function() { console.log(this.$refs['working-form'], this.$refs); },
   methods: {
+    sucess : function( d : Record<string, string> ){
+      const form = this.$refs['working-form'] as HTMLFormElement;
+
+      form.reset();
+      this.message = `se ha registrado al colegio ${ d.realName } a nombre de ${ d.buyerMail }!`
+      setTimeout(()=>this.message = null, 5000)
+    },
     change(e : Event){
       const targ = e.target as HTMLSelectElement;
 
       switch(targ.getAttribute('name')){
-        case 'regi': saxios.get(`/regions/${targ.value}/provinces`).then(r =>this.prov = r.data as item[]).catch(e=>console.log({...e})); break;
-        case 'prov': saxios.get(`/provinces/${targ.value}/districts`).then(r =>this.dist = r.data as item[]).catch(e=>console.log({...e})); break;
+        case 'regi': axios.get(`/regions/${targ.value}/provinces`).then(r =>this.prov = r.data as item[]).catch(e=>console.log({...e})); break;
+        case 'prov': axios.get(`/provinces/${targ.value}/districts`).then(r =>this.dist = r.data as item[]).catch(e=>console.log({...e})); break;
         case 'dist': 
           break;
       }
     },
     send : function(e : Event){
       const data = Object.fromEntries((new FormData(e.target as HTMLFormElement)).entries());
-      saxios.post('/educational-institutions', {
+      axios.post('/educational-institutions', {
         realName : data.coleg, buyerMail : data.email, district : data.dist
-      }).then( r=>{
+      }).then( r => {
         if(r.status !== 201) return console.log('r: ', r.data);
         console.log('success: ', r.data);
+        this.sucess(r.data as Record<string, string>);
       }).catch( e => e.toJSON()).then(console.log);
     }
   }
