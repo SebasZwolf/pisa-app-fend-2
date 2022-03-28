@@ -64,17 +64,27 @@ export default vue.extend({
             const place_holder = "/study-materials";
             
             type returnValue = { id : number, name : string };
+
             axios.post<returnValue>(place_holder, {
                 topic   : data.topic,
                 name    : data.name,
                 prefix  : '.' + blob.name.split('.').pop(),
             }).then(res => {
                 const r : returnValue = res.data;
+                const fdata= new FormData();
+                fdata.append('file', blob, blob.name);
 
-                axios.post(`${place_holder}/${r.id}/upload`, blob, {
-                    headers: { "content-type": blob.type }
-                }).then(({status, data}) => console.log( status === 201 ? ['succ', data] : ['fail', data]))
-                .catch(console.warn);
+                axios.post(`${place_holder}/${r.id}/upload`, fdata,{
+                    headers : {
+                        'content-type': `multipart/form-data; boundary=${data._boundary}`
+                    }
+                })
+
+
+                /*axios.post(`${place_holder}/${r.id}/upload`, blob, {
+                    headers: { "content-type" : blob.type }
+                }).then( ({status, data}) => console.log( status === 201 ? ['succ', data] : ['fail', data]) )
+                .catch(console.warn);*/
                 
             }).catch(console.warn);
         }

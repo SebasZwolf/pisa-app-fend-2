@@ -36,17 +36,16 @@ export default vue.extend({
     login(e : Event) {
       const data = Object.fromEntries((new FormData(e.target as HTMLFormElement)).entries());
 
-      axios.post('/login', { username : data.uname, password : data.passw, })
+      axios.post('/login', { username : data.uname, password : data.passw })
         .then((r) : string | undefined => {
           if(r.status !== 201) return this.error_msg = r.data as string;
 
-          localStorage.setItem('token', (r.data as { token : string}).token);
+          localStorage.setItem('token', (r.data as { token : string }).token);
           this.$router.push({ name : 'school'});
-        }).catch(({ response : { status } }) =>{
+        }).catch(({ response : { status } }) => {
           this.error_msg = status === 401 ? 'usuario no valido!' : status === 404 ? 'error interno, comunicar al admin' : 'error desconocido, comunicar al admin';
         })    
-    return;
-
+      return;
     }
   }
 })
