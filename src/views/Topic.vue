@@ -78,13 +78,7 @@ export default vue.extend({
                     headers : {
                         'content-type': `multipart/form-data; boundary=${data._boundary}`
                     }
-                })
-
-
-                /*axios.post(`${place_holder}/${r.id}/upload`, blob, {
-                    headers: { "content-type" : blob.type }
-                }).then( ({status, data}) => console.log( status === 201 ? ['succ', data] : ['fail', data]) )
-                .catch(console.warn);*/
+                }).then(()=>alert('enviado!'));
                 
             }).catch(console.warn);
         }
